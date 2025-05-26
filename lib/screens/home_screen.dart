@@ -11,20 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedSport = "Football";
-
-  final List<Map<String, dynamic>> sports = [
-    {"name": "Football", "icon": Icons.sports_soccer, "color": Colors.green},
-    {
-      "name": "Basketball",
-      "icon": Icons.sports_basketball,
-      "color": Colors.orange,
-    },
-    {"name": "Tennis", "icon": Icons.sports_tennis, "color": Colors.yellow},
-    {"name": "Cricket", "icon": Icons.sports_cricket, "color": Colors.blue},
-    {"name": "Hockey", "icon": Icons.sports_hockey, "color": Colors.red},
-  ];
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

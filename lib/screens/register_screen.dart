@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homework/routes/app_route.dart';
 import 'package:homework/screens/login_screen.dart';
 import 'package:homework/theme/app_colors.dart';
 
@@ -69,7 +70,9 @@ class RegisterScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    AppRouter.goToPhoneOtp(context);
+                  },
                   child: const Text(
                     'Register',
                     style: TextStyle(fontSize: 16, color: Colors.white),

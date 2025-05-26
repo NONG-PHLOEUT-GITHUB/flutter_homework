@@ -14,9 +14,7 @@ class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
 
   // Pages for each tab
-  final List<Widget> _pages = [
-    HomeScreen(),
-  ];
+  final List<Widget> _pages = [HomeScreen()];
 
   // Handle bottom navigation taps
   void _onItemTapped(int index) {
@@ -35,22 +33,18 @@ class _MainLayoutState extends State<MainLayout> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: 'Home',
-            // label: AppLocalizations.of(context)!.home,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite_outline),
             label: 'Home',
-            // label: AppLocalizations.of(context)!.venue,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag_outlined),
             label: 'Home',
-            // label: AppLocalizations.of(context)!.ticket,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),
             label: 'Home',
-            // label: AppLocalizations.of(context)!.account,
           ),
         ],
         currentIndex: _selectedIndex,

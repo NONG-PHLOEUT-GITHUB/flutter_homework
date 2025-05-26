@@ -54,12 +54,29 @@ class _LoginPageState extends State<LoginPage> {
                 keyboardType: TextInputType.emailAddress,
               ),
 
-              const SizedBox(height: 24),
+              // Forgot Password Text
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    // TODO: Add navigation to Forgot Password screen
+                    // Example: AppRouter.goToForgotPassword(context);
+                  },
+                  child: const Text(
+                    'Forgot Password?',
+                    style: TextStyle(
+                      color: Colors.teal,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+
               SizedBox(
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    AppRouter.goToOtp(context);
+                    AppRouter.goToPhoneOtp(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
