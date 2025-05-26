@@ -1,0 +1,324 @@
+{
+  "appTitle": "Sports Venue Booking App",
+  "@appTitle": {},
+  "loading": "Loading...",
+  "@loading": {},
+  "btnSave": "Save Change",
+  "@btnSave": {},
+  "sendCode": "Send Code",
+  "@sendCode": {},
+  "btnBookNow": "Booking Now",
+  "@btnBookNow": {},
+  "register": "Register",
+  "@register": {},
+  "loginTitle": "Login Account",
+  "@loginTitle": {},
+  "welcomeMessage": "Hello, welcome back to account!",
+  "@welcomeMessage": {},
+  "dontHaveAccount": "Don’t have an account? ",
+  "@dontHaveAccount": {},
+  "signUp": "Sign Up",
+  "@signUp": {},
+  "signInWith": "Sign in with Google or Facebook",
+  "@signInWith": {},
+  "logout": "Logout",
+  "@logout": {
+    "description": "Button or text for logging out"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "User profile section"
+  },
+  "bookYourGround": "Book Your Ground",
+  "@bookYourGround": {
+    "description": "User profile section"
+  },
+  "greatOffers": "Great Offers",
+  "@greatOffers": {
+    "description": "User profile section"
+  },
+  "editProfile": "Edit Profile",
+  "@editProfile": {
+    "description": "Button or text for editing user profile"
+  },
+  "favorites": "Favorites",
+  "@favorites": {
+    "description": "List of favorite venues"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Search button or input label"
+  },
+  "searchPlaceholder": "Search by location, sport type, or date",
+  "@searchPlaceholder": {
+    "description": "Placeholder text for search input"
+  },
+  "venueDetails": "Venue Details",
+  "@venueDetails": {
+    "description": "Page or section for venue details"
+  },
+  "availability": "Availability",
+  "@availability": {
+    "description": "Label for venue availability"
+  },
+  "amenities": "Amenities",
+  "@amenities": {
+    "description": "Section or list of amenities"
+  },
+  "pricing": "Pricing",
+  "@pricing": {
+    "description": "Label for pricing information"
+  },
+  "reviews": "Reviews",
+  "@reviews": {
+    "description": "User reviews section"
+  },
+  "addToFavorites": "Add to Favorites",
+  "@addToFavorites": {
+    "description": "Button to add venue to favorites"
+  },
+  "booking": "Booking",
+  "@booking": {
+    "description": "Section or page for booking venues"
+  },
+  "selectVenue": "Select Venue",
+  "@selectVenue": {
+    "description": "Label for selecting a venue"
+  },
+  "selectDateTime": "Select Date & Time",
+  "@selectDateTime": {
+    "description": "Label for selecting date and time"
+  },
+  "bookNow": "Book Now",
+  "@bookNow": {
+    "description": "Button to confirm a booking"
+  },
+  "bookingSuccess": "Booking Successful!",
+  "@bookingSuccess": {
+    "description": "Message displayed after successful booking"
+  },
+  "payment": "Payment",
+  "@payment": {
+    "description": "Section or label for payment"
+  },
+  "payNow": "Pay Now",
+  "@payNow": {
+    "description": "Button to proceed with payment"
+  },
+  "paymentSuccess": "Payment Successful!",
+  "@paymentSuccess": {
+    "description": "Message displayed after successful payment"
+  },
+  "paymentFailure": "Payment Failed",
+  "@paymentFailure": {
+    "description": "Message displayed when payment fails"
+  },
+  "notifications": "ការជូនដំណឹង",
+  "@notifications": {
+    "description": "Section or link to refund policy details"
+  },
+  "noNotifications": "គ្មានការជូនដំណឹងថ្មី",
+  "@noNotifications": {
+    "description": "Section or link to refund policy details"
+  },
+  "english": "English",
+  "@english": {
+    "description": "Label for English language"
+  },
+  "khmer": "Khmer",
+  "@khmer": {
+    "description": "Label for Khmer language"
+  },
+  "changeLanguage": "Change Language",
+  "@changeLanguage": {
+    "description": "Option to change app language"
+  },
+  "languageChanged": "Language Changed",
+  "@languageChanged": {
+    "description": "Option to change app language"
+  },
+  "confirmBooking": "Confirm Booking",
+  "@confirmBooking": {
+    "description": "Option to change app language"
+  },
+  "yourContactInfo": "Your Contact Info",
+  "@yourContactInfo": {
+    "description": "Section title for user's contact information"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Label for full name field"
+  },
+  "enterFullName": "Enter your full name",
+  "@enterFullName": {
+    "description": "Placeholder text for full name field"
+  },
+  "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Label for phone number field"
+  },
+  "email": "Email Address",
+  "@email": {
+    "description": "Label for phone number field"
+  },
+  "enterEmail": "Enter your email",
+  "@enterEmail": {
+    "description": "Label for phone number field"
+  },
+  "enterPhoneNumber": "Enter your phone number",
+  "@enterPhoneNumber": {
+    "description": "Placeholder text for phone number field"
+  },
+  "bookingDetails": "Booking Details",
+  "@bookingDetails": {
+    "description": "Section title for booking details"
+  },
+  "selectField": "Select Field",
+  "@selectField": {
+    "description": "Label for field selection dropdown"
+  },
+  "date": "Date",
+  "@date": {
+    "description": "Label for selected date"
+  },
+  "time": "Time",
+  "@time": {
+    "description": "Label for selected time"
+  },
+  "totalPrice": "Total Price",
+  "@totalPrice": {
+    "description": "Label for total price"
+  },
+  "notification": "Notification",
+  "@notification": {
+    "description": "Title or label for the notification section or page"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Bottom navigation tab for Home"
+  },
+  "venue": "Venue",
+  "@venue": {
+    "description": "Bottom navigation tab for Venue selection"
+  },
+  "ticket": "Ticket",
+  "@ticket": {
+    "description": "Bottom navigation tab for viewing or managing tickets"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Bottom navigation tab for user account"
+  },
+  "makeBooking": "Let's make a booking",
+  "@makeBooking": {
+    "description": "Encouragement or call to action to start the booking process"
+  },
+  "tutorial": "Tutorial",
+  "@tutorial": {
+    "description": "Label for app tutorial or guide"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Label for language settings"
+  },
+  "editAccount": "Edit Account",
+  "@editAccount": {
+    "description": "Bottom navigation tab for user account"
+  },
+  "paymentOptions": "Payment Options",
+  "@paymentOptions": {
+    "description": "Title for payment options screen"
+  },
+  "summaryInformation": "Summary Information",
+  "@summaryInformation": {
+    "description": "Section title for booking summary"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Label for location or booking name"
+  },
+  "duration": "Duration",
+  "@duration": {
+    "description": "Label for total booking duration"
+  },
+  "field": "Field",
+  "@field": {
+    "description": "Label for selected field(s)"
+  },
+  "totalAmountToPay": "Total Amount to pay :",
+  "@totalAmountToPay": {
+    "description": "Label for total payment amount"
+  },
+  "pleaseSelectPayment": "Please select a payment option",
+  "@pleaseSelectPayment": {
+    "description": "Prompt to choose a payment method"
+  },
+  "abaPay": "ABA Pay",
+  "@abaPay": {
+    "description": "ABA Pay method label"
+  },
+  "tapToPayWithABA": "Tap to pay with ABA mobile",
+  "@tapToPayWithABA": {
+    "description": "Subtitle for ABA Pay method"
+  },
+  "khqr": "KHQR",
+  "@khqr": {
+    "description": "KHQR method label"
+  },
+  "tapToPayWithKHQR": "Tap to pay with KHQR mobile",
+  "@tapToPayWithKHQR": {
+    "description": "Subtitle for KHQR method"
+  },
+  "creditDebitCard": "Credit/Debit card",
+  "@creditDebitCard": {
+    "description": "Label for credit or debit card option"
+  },
+  "checkOut": "Check Out",
+  "@checkOut": {
+    "description": "Checkout button text"
+  },
+  "paymentSuccessful": "Payment Successful!",
+  "@paymentSuccessful": {
+    "description": "Title shown after successful payment"
+  },
+  "paymentThankYou": "Thank you for payment. Your transaction has been processed successfully",
+  "@paymentThankYou": {
+    "description": "Message shown after a successful transaction"
+  },
+  "returnHome": "Return Home",
+  "@returnHome": {
+    "description": "Button text to return to the home screen"
+  },
+  "verify": "Verify",
+  "@verify": {
+    "description": "Action to verification code"
+  },
+  "didNotReceiveCode": "Didn't receive code? ",
+  "@didNotReceiveCode": {
+    "description": "Prompt asking if the user didn't receive the verification code"
+  },
+  "resend": "Resend",
+  "@resend": {
+    "description": "Action to resend the verification code"
+  },
+  "enterVerificationCode": "Enter the verification code we just sent on your email address or phone number.",
+  "@enterVerificationCode": {
+    "description": "Instruction to enter the OTP verification code sent by email"
+  },
+  "otpVerification": "OTP Verification",
+  "@otpVerification": {
+    "description": "Title for the OTP verification screen"
+  },
+
+  "creditPay": "Credit Pay",
+  "@creditPay": {},
+
+  "cardName": "Card Name",
+  "@cardName": {},
+
+  "cardHolderName": "Card Holder Name",
+  "@cardHolderName": {},
+
+  "expiryDate": "Expiry Date",
+  "@expiryDate": {}
+}
