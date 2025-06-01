@@ -1,0 +1,20 @@
+[
+  {
+    "imgPath": "assets/images/man_city.webp",
+    "title": "Mens Shirt",
+    "currentPrice": "17.00",
+    "oldPrice": "49.00"
+  },
+  {
+    "imgPath": "assets/images/lp.jpg",
+    "title": "Mens Jacket",
+    "currentPrice": "32.00",
+    "oldPrice": "59.00"
+  },
+  {
+    "imgPath": "assets/images/mc2.webp",
+    "title": "Casual Shirt",
+    "currentPrice": "21.00",
+    "oldPrice": "42.00"
+  }
+]

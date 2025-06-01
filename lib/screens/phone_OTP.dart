@@ -1,24 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:homework/routes/app_route.dart';
 import 'package:homework/theme/app_colors.dart';
 
-class PhoneOtpPage extends StatelessWidget {
+class PhoneOtpPage extends StatefulWidget {
   const PhoneOtpPage({super.key});
+
+  @override
+  State<PhoneOtpPage> createState() => _PhoneOtpPageState();
+}
+
+class _PhoneOtpPageState extends State<PhoneOtpPage> {
+  final TextEditingController _phoneController = TextEditingController();
+  String? _phoneError;
+
+  void _validatePhone(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _phoneError = 'Phone number is required';
+      } else if (!RegExp(r'^(855|0)\d{8,11}$').hasMatch(value)) {
+        _phoneError = 'Invalid phone number';
+      } else {
+        _phoneError = null;
+      }
+    });
+  }
+
+  void _submit() {
+    _validatePhone(_phoneController.text);
+
+    if (_phoneError == null) {
+      AppRouter.goToOtp(context); // Navigate only if valid
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final double paddingHorizontal = 24;
-    final double borderRadius = 12;
-
-    final TextStyle titleStyle = const TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.bold,
-    );
 
     final InputDecoration phoneInputDecoration = InputDecoration(
       hintText: '(855) 12 34 56 78',
-      border: InputBorder.none,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      errorText: _phoneError,
     );
 
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
@@ -38,42 +60,32 @@ class PhoneOtpPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Back button
-              // Title
-              Center(child: Text('Phone OTP', style: titleStyle)),
-
+              _loginHeader,
+              const SizedBox(height: 8),
+              _subtitleText,
               const SizedBox(height: 48),
-
-              // Phone Input Field
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(borderRadius),
-                ),
-                child: TextFormField(
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(10),
-                  ],
-                  decoration: phoneInputDecoration,
-                ),
+              Text(
+                'Phone number',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                onChanged: _validatePhone,
+                decoration: phoneInputDecoration,
               ),
 
               const SizedBox(height: 48),
 
-              // Submit Button
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    AppRouter.goToOtp(context);
-                  },
+                  onPressed: _submit,
                   style: buttonStyle,
                   child: const Text(
-                    'Submit',
+                    'Send OTP',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -85,6 +97,31 @@ class PhoneOtpPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // Widget get _formTextField {
+
+  // }
+
+  final Widget _subtitleText = Text(
+    'Enter your phone number to get OTP code',
+    style: TextStyle(color: Colors.black54),
+  );
+
+  Widget get _loginHeader {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: const [
+        Text(
+          'Phone OTP',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }

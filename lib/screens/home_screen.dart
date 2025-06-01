@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homework/theme/app_colors.dart';
 import '../widgets/carousel_slider.dart';
-// import 'package:homework/gen_l10n/app_localizations.dart';
+import '../services/product_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,7 +11,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
+  late Future<List<Map<String, dynamic>>> _productFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _productFuture = loadMaleProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +49,16 @@ class _HomeScreenState extends State<HomeScreen> {
           CircleAvatar(
             backgroundColor: Colors.grey.shade200,
             child: IconButton(
-              icon: const Icon(Icons.notifications_none, color: Colors.black),
+              icon: Badge.count(
+                count: 99,
+                backgroundColor: Colors.red,
+                child: const Icon(
+                  Icons.notifications_none,
+                  color: Colors.black,
+                ),
+              ),
+              // icon: const Icon(Icons.notifications_none, color: Colors.black),
               onPressed: () {
-                // TODO: Handle notification action
               },
             ),
           ),
@@ -90,14 +104,10 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 12),
           categoryChips,
           SizedBox(height: 16),
-          sectionHeader("បុរស"),
+          sectionHeader("New Arrivals"),
           SizedBox(height: 8),
-          maleProductList,
+          productList,
           SizedBox(height: 16),
-          sectionHeader("ស្រី"),
-          SizedBox(height: 8),
-          femaleProductList,
-          SizedBox(height: 16)
         ],
       ),
     );
@@ -108,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
     children: [
       categoryChip("ទាំងអស់", selected: true),
       categoryChip("បុរស"),
-      categoryChip("ស្រី"),
+      categoryChip("នារី"),
       categoryChip("ក្មេង"),
     ],
   );
@@ -132,95 +142,104 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // 🧢 Male Product List
-  final Widget maleProductList = SizedBox(
-    height: 200,
+  final Widget productList = SizedBox(
+    height: 220,
     child: ListView(
       scrollDirection: Axis.horizontal,
       children: [
-        productCard('assets/images/image.webp', '\$17,00'),
-        productCard('assets/images/image.webp', '\$32,00'),
-        productCard('assets/images/image.webp', '\$21,00'),
-      ],
-    ),
-  );
-
-  // 👗 Female Product List
-  final Widget femaleProductList = SizedBox(
-    height: 200,
-    child: ListView(
-      scrollDirection: Axis.horizontal,
-      children: [
-        productTagCard('assets/images/image.webp', '1780💙', 'New'),
-        productTagCard('assets/images/image.webp', '1780💙', 'Sale'),
-        productTagCard('assets/images/image.webp', '1780💙', 'Hot'),
-        productTagCard('assets/images/image.webp', '1780💙', ''),
+        productCard(
+          'assets/images/man_city.webp',
+          'Mens Shirt',
+          '\$17,00',
+          '490.00',
+        ),
+        productCard('assets/images/lp.jpg', 'Mens Shirt', '\$32,00', '490.00'),
+        productCard(
+          'assets/images/mc2.webp',
+          'Mens Shirt',
+          '\$21,00',
+          '490.00',
+        ),
       ],
     ),
   );
 
   // 📦 Male Product Card
-  static Widget productCard(String imgPath, String price) {
+  static Widget productCard(
+    String imgPath,
+    String title,
+    String currentPrice,
+    String oldPrice,
+  ) {
     return Container(
-      width: 140,
-      margin: EdgeInsets.only(right: 12),
+      width: 160,
+      // height: 280,
+      margin: const EdgeInsets.only(right: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(imgPath),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          SizedBox(height: 6),
-          Text("Lorem ipsum dolor sit amet consectetur.", maxLines: 2),
-          Text(price, style: TextStyle(fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-
-  // 👒 Female Product Card with Tag
-  static Widget productTagCard(String imgPath, String likes, String tag) {
-    return Container(
-      width: 120,
-      margin: EdgeInsets.only(right: 12),
-      child: Column(
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(imgPath),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Use fixed height for image section to avoid overflow
+          Stack(
             children: [
-              Text(likes, style: TextStyle(color: Colors.blue)),
-              if (tag.isNotEmpty)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    tag,
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  imgPath,
+                  height: 160,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.favorite, color: Colors.red, size: 16),
+                ),
+              ),
             ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(
+                      '\$$currentPrice',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      '\$$oldPrice',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey,
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -238,7 +257,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Row(
           children: [
-            Text("ទាំងអស់", style: TextStyle(fontWeight: FontWeight.bold)),
+            Text("View all", style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(width: 4),
             Icon(Icons.arrow_forward, color: Colors.blue),
           ],
         ),

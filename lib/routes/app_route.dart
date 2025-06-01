@@ -20,6 +20,33 @@ class AppRouter {
     mainLayout: (context) => const MainLayout(),
   };
 
+  // Corrected version of onGenerateRoute
+  Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case login:
+        return _buildRoute(const LoginPage());
+      case otp:
+        return _buildRoute(const OtpVerificationPage());
+      case phoneOtp:
+        return _buildRoute(const PhoneOtpPage());
+      case register:
+        return _buildRoute(const RegisterScreen());
+      case mainLayout:
+        return _buildRoute(const MainLayout());
+      default:
+        return MaterialPageRoute(
+          builder: (context) => const Scaffold(
+            body: Center(child: Text('Page not found')),
+          ),
+        );
+    }
+  }
+
+  MaterialPageRoute _buildRoute(Widget widget) {
+    return MaterialPageRoute(builder: (context) => widget);
+  }
+
+
   // Optional: helper methods
   static void goToPhoneOtp(BuildContext context) {
     Navigator.pushNamed(context, phoneOtp);

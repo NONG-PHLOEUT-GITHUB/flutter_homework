@@ -50,7 +50,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   // Subtitle Text
   final Widget _subtitleText = Text(
-    'Verify OTP',
+    'Enter your OTP code number',
     style: TextStyle(color: Colors.black54),
   );
 
@@ -110,7 +110,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           }
         },
         child: Text(
-          'Send',
+          'Verify',
           style: TextStyle(fontSize: 16, color: AppColors.background),
         ),
       ),

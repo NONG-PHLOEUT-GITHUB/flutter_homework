@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
           headerForegroundColor: Colors.white,
         ),
       ),
-      initialRoute: AppRouter.login,
+      initialRoute: AppRouter.mainLayout,
       routes: AppRouter.routes,
     );
   }

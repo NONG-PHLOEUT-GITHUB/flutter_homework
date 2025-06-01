@@ -3,60 +3,78 @@ import 'package:homework/routes/app_route.dart';
 import 'package:homework/screens/login_screen.dart';
 import 'package:homework/theme/app_colors.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String? _emailError;
+  String? _passwordError;
+  bool _obscurePassword = true;
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
+  }
+
+  void _validatePassword() {
+    String password = _passwordController.text;
+
+    setState(() {
+      if (password.isEmpty) {
+        _passwordError = 'Password is required';
+      } else if (password.length < 8) {
+        _passwordError = 'Password must be at least 8 characters';
+      } else {
+        _passwordError = null;
+      }
+    });
+  }
+
+  void _validateEmailLive(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _emailError = 'Email is required';
+      } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$').hasMatch(value)) {
+        _emailError = 'Invalid email format';
+      } else {
+        _emailError = null;
+      }
+    });
+  }
+
+  void _submitForm() {
+    _validatePassword();
+    _validateEmailLive(_emailController.text);
+
+    if (_emailError == null && _passwordError == null) {
+      // Proceed to next screen or API login
+      AppRouter.goToPhoneOtp(context);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final backgroundColor = const Color(0xFFF9F9F9); // light background
     return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(elevation: 0, backgroundColor: backgroundColor),
+      backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _loginHeader,
+
               const SizedBox(height: 16),
 
-              // Welcome Text
-              const Text(
-                'Hello! Register to get started',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  height: 1.4,
-                ),
-              ),
-
-              const SizedBox(height: 36),
-
-              // Email Field
-              Text('Username', style: TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 8),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Enter your username',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              SizedBox(height: 16),
-              Text('Password', style: TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 8),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Enter your password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-
+              _formTextField,
               const SizedBox(height: 24),
 
               // Login Button
@@ -70,9 +88,7 @@ class RegisterScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    AppRouter.goToPhoneOtp(context);
-                  },
+                  onPressed: _submitForm,
                   child: const Text(
                     'Register',
                     style: TextStyle(fontSize: 16, color: Colors.white),
@@ -100,38 +116,11 @@ class RegisterScreen extends StatelessWidget {
               // Social Buttons
               const SizedBox(height: 24),
 
-              _socialButton('Google', 'assets/images/google.webp'),
-
-              const SizedBox(height: 16),
-
-              _socialButton('Facebook', 'assets/images/fb.webp'),
-
+              _socialButtons,
               const SizedBox(height: 28),
+              _alreadyHaveAccount,
 
               // Register Now
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Already have an accoun ? "),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        color: Colors.teal,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -139,20 +128,122 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget _socialButton(String name, String imagePath) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        icon: Image.asset(imagePath, width: 24, height: 24),
-        label: Text(name),
-        onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+  Widget get _formTextField {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 24),
+
+        Text('Email', style: TextStyle(fontWeight: FontWeight.w500)),
+        SizedBox(height: 8),
+
+        TextField(
+          decoration: InputDecoration(
+            hintText: 'Enter your email',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            errorText: _emailError,
+          ),
+          controller: _emailController,
+          onChanged: _validateEmailLive,
+          keyboardType: TextInputType.emailAddress,
+        ),
+
+        SizedBox(height: 16),
+
+        Text('Password', style: TextStyle(fontWeight: FontWeight.w500)),
+        SizedBox(height: 8),
+
+        TextField(
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          onChanged: (_) => _validatePassword(),
+          keyboardType: TextInputType.visiblePassword,
+          decoration: InputDecoration(
+            hintText: 'Enter your password',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            errorText: _passwordError,
+            suffixIcon: GestureDetector(
+              onTap: _togglePasswordVisibility,
+              child: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey,
+              ),
+            ),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget get _alreadyHaveAccount {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Already have an accoun ? "),
+        GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          },
+          child: const Text(
+            'Login',
+            style: TextStyle(color: Colors.teal, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget get _socialButtons {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildSocialIcon('assets/images/google.webp'),
+        SizedBox(width: 16),
+        _buildSocialIcon('assets/images/fb2.webp'),
+      ],
+    );
+  }
+
+  Widget _buildSocialIcon(String assetPath) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        shape: BoxShape.circle,
       ),
+      child: IconButton(
+        icon: Image.asset(assetPath, width: 24, height: 24),
+        onPressed: () {},
+      ),
+    );
+  }
+
+  Widget get _loginHeader {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title
+        Text(
+          'Register',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+
+        SizedBox(height: 8),
+
+        // Subtitle
+        Text(
+          'Please register in to continue.',
+          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+        ),
+      ],
     );
   }
 }

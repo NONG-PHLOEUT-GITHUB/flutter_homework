@@ -13,6 +13,54 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool isPhoneSelected = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String? _emailError;
+  String? _passwordError;
+  bool _obscurePassword = true;
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
+  }
+
+  void _validatePassword() {
+    String password = _passwordController.text;
+
+    setState(() {
+      if (password.isEmpty) {
+        _passwordError = 'Password is required';
+      } else if (password.length < 8) {
+        _passwordError = 'Password must be at least 8 characters';
+      } else {
+        _passwordError = null;
+      }
+    });
+  }
+
+  void _validateEmailLive(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _emailError = 'Email is required';
+      } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$').hasMatch(value)) {
+        _emailError = 'Invalid email format';
+      } else {
+        _emailError = null;
+      }
+    });
+  }
+
+  void _submitForm() {
+    _validatePassword();
+    _validateEmailLive(_emailController.text);
+
+    if (_emailError == null && _passwordError == null) {
+      // Proceed to next screen or API login
+      AppRouter.goToPhoneOtp(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,57 +75,16 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 24),
-
-              Text('Username', style: TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 8),
-
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Enter your username',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 16),
-              Text('Password', style: TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 8),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Enter your password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-
-              // Forgot Password Text
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    // TODO: Add navigation to Forgot Password screen
-                    // Example: AppRouter.goToForgotPassword(context);
-                  },
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: Colors.teal,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
+              _loginHeader,
+              _formTextField,
+              SizedBox(height: 12),
+              _forgetPassword,
+              SizedBox(height: 12),
 
               SizedBox(
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () {
-                    AppRouter.goToPhoneOtp(context);
-                  },
+                  onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
@@ -105,42 +112,9 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               const SizedBox(height: 24),
-
-              _socialButton('Google', 'assets/images/google.webp'),
-
-              const SizedBox(height: 16),
-
-              _socialButton('Facebook', 'assets/images/fb.webp'),
-
+              _socialButtons,
               const SizedBox(height: 32),
-              Center(
-                child: Text.rich(
-                  TextSpan(
-                    text: 'Didn’t have account, ',
-                    children: [
-                      TextSpan(
-                        text: 'Register',
-                        style: const TextStyle(
-                          color: Colors.deepOrange,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        recognizer:
-                            TapGestureRecognizer()
-                              ..onTap = () {
-                                // 👇 Push to register screen
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => const RegisterScreen(),
-                                  ),
-                                );
-                              },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _haveNoAccount,
             ],
           ),
         ),
@@ -148,20 +122,151 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _socialButton(String name, String imagePath) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        icon: Image.asset(imagePath, width: 24, height: 24),
-        label: Text(name),
-        onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+  Widget get _loginHeader {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title
+        Text(
+          'Login',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+
+        SizedBox(height: 8),
+
+        // Subtitle
+        Text(
+          'Please sign in to continue.',
+          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+        ),
+      ],
+    );
+  }
+
+  Widget get _forgetPassword {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: () {
+          // Handle forgot password tap
+        },
+        child: Text(
+          'Forgot Password?',
+          style: TextStyle(
+            color: Colors.teal,
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            // optional for a link look
           ),
         ),
       ),
     );
   }
+
+  Widget get _formTextField {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 24),
+
+        Text('Email', style: TextStyle(fontWeight: FontWeight.w500)),
+        SizedBox(height: 8),
+
+        TextField(
+          decoration: InputDecoration(
+            hintText: 'Enter your email',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            errorText: _emailError,
+          ),
+          controller: _emailController,
+          onChanged: _validateEmailLive,
+          keyboardType: TextInputType.emailAddress,
+        ),
+
+        SizedBox(height: 16),
+
+        Text('Password', style: TextStyle(fontWeight: FontWeight.w500)),
+        SizedBox(height: 8),
+
+        TextField(
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          onChanged: (_) => _validatePassword(),
+          keyboardType: TextInputType.visiblePassword,
+          decoration: InputDecoration(
+            hintText: 'Enter your password',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            errorText: _passwordError,
+            suffixIcon: GestureDetector(
+              onTap: _togglePasswordVisibility,
+              child: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget get _haveNoAccount {
+    return Center(
+      child: Text.rich(
+        TextSpan(
+          text: 'Didn’t have account, ',
+          children: [
+            TextSpan(
+              text: 'Register',
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterScreen(),
+                        ),
+                      );
+                    },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget get _socialButtons {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildSocialIcon('assets/images/google.webp'),
+        SizedBox(width: 16),
+        _buildSocialIcon('assets/images/fb2.webp'),
+      ],
+    );
+  }
+
+  Widget _buildSocialIcon(String assetPath) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Image.asset(assetPath, width: 24, height: 24),
+        onPressed: () {},
+      ),
+    );
+  }
+
 }
