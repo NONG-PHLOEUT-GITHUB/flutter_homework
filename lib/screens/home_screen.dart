@@ -11,13 +11,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<List<Map<String, dynamic>>> _productFuture;
+  String selectedCategory = "ទាំងអស់";
+  final TextEditingController _searchController = TextEditingController();
+  String searchKeyword = "";
 
-  @override
-  void initState() {
-    super.initState();
-    _productFuture = loadMaleProducts();
-  }
+  final List<Map<String, dynamic>> allProducts = [
+    {
+      "image": 'assets/images/man_city.webp',
+      "title": 'Mens Shirt',
+      "currentPrice": '17.00',
+      "oldPrice": '490.00',
+      "category": 'បុរស',
+    },
+    {
+      "image": 'assets/images/lp.jpg',
+      "title": 'Ladies Top',
+      "currentPrice": '32.00',
+      "oldPrice": '490.00',
+      "category": 'នារី',
+    },
+    {
+      "image": 'assets/images/mc2.webp',
+      "title": 'Kids Shirt',
+      "currentPrice": '21.00',
+      "oldPrice": '490.00',
+      "category": 'ក្មេង',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               // icon: const Icon(Icons.notifications_none, color: Colors.black),
-              onPressed: () {
-              },
+              onPressed: () {},
             ),
           ),
         ],
@@ -81,15 +100,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
-              children: const [
+              children: [
                 Icon(Icons.search, color: Colors.black54),
                 SizedBox(width: 8),
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
                       hintText: 'ស្វែងរក...', // "Search..." in Khmer
                       border: InputBorder.none,
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchKeyword = value.toLowerCase();
+                      });
+                    },
                   ),
                 ),
               ],
@@ -141,28 +166,49 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 🧢 Male Product List
-  final Widget productList = SizedBox(
-    height: 220,
-    child: ListView(
-      scrollDirection: Axis.horizontal,
-      children: [
-        productCard(
-          'assets/images/man_city.webp',
-          'Mens Shirt',
-          '\$17,00',
-          '490.00',
-        ),
-        productCard('assets/images/lp.jpg', 'Mens Shirt', '\$32,00', '490.00'),
-        productCard(
-          'assets/images/mc2.webp',
-          'Mens Shirt',
-          '\$21,00',
-          '490.00',
-        ),
-      ],
-    ),
-  );
+  List<Map<String, dynamic>> get filteredProducts {
+    List<Map<String, dynamic>> filtered = allProducts;
+
+    // Category filtering
+    if (selectedCategory != "ទាំងអស់") {
+      filtered =
+          filtered
+              .where(
+                (p) =>
+                    p['category'].toLowerCase() ==
+                    selectedCategory.toLowerCase(),
+              )
+              .toList();
+    }
+
+    // Text filtering
+    if (searchKeyword.isNotEmpty) {
+      filtered =
+          filtered
+              .where((p) => p['title'].toLowerCase().contains(searchKeyword) || p['currentPrice'].toLowerCase().contains(searchKeyword))
+              .toList();
+    }
+
+    return filtered;
+  }
+
+  Widget get productList {
+    return SizedBox(
+      height: 220,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children:
+            filteredProducts.map((product) {
+              return productCard(
+                product['image'],
+                product['title'],
+                product['currentPrice'],
+                product['oldPrice'],
+              );
+            }).toList(),
+      ),
+    );
+  }
 
   // 📦 Male Product Card
   static Widget productCard(
