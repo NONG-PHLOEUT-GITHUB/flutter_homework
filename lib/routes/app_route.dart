@@ -3,6 +3,7 @@ import 'package:homework/screens/layout.dart';
 import 'package:homework/screens/login_screen.dart';
 import 'package:homework/screens/otp_comfirm_screen.dart';
 import 'package:homework/screens/phone_OTP.dart';
+import 'package:homework/screens/profile.screen.dart';
 import 'package:homework/screens/register_screen.dart';
 
 class AppRouter {
@@ -11,6 +12,7 @@ class AppRouter {
   static const String phoneOtp = '/phone-otp';
   static const String register = '/register';
   static const String mainLayout = '/layout';
+  static const String profile = '/profile';
 
   static final Map<String, WidgetBuilder> routes = {
     login: (context) => const LoginPage(),
@@ -18,6 +20,7 @@ class AppRouter {
     phoneOtp: (context) => const PhoneOtpPage(),
     register: (_) => const RegisterScreen(),
     mainLayout: (context) => const MainLayout(),
+    profile: (context) => SettingsScreen(),
   };
 
   // Corrected version of onGenerateRoute

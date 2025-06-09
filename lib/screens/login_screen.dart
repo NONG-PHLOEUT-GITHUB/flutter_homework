@@ -3,6 +3,8 @@ import 'package:homework/routes/app_route.dart';
 import 'package:homework/theme/app_colors.dart';
 import 'package:homework/screens/register_screen.dart';
 import 'package:flutter/gestures.dart';
+import 'package:homework/widgets/social_buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -52,13 +54,42 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _submitForm() {
+  Future<void> _loginUser() async {
+    // Re-validate just before submission to catch any missed updates
     _validatePassword();
     _validateEmailLive(_emailController.text);
 
     if (_emailError == null && _passwordError == null) {
-      // Proceed to next screen or API login
-      AppRouter.goToPhoneOtp(context);
+      final prefs = await SharedPreferences.getInstance();
+      final storedEmail = prefs.getString('user_email');
+      final storedPassword = prefs.getString('user_password');
+
+      if (_emailController.text.trim() == storedEmail &&
+          _passwordController.text.trim() == storedPassword) {
+        // Successful login
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Login successful! Welcome!')));
+        // Navigate to the next screen (e.g., home screen)
+        AppRouter.goToPhoneOtp(context); // Assuming you have a goToHome route
+      } else {
+        // Invalid credentials
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Invalid email or password.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } else {
+      // Show a snackbar if validation failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please correct the errors in the form.'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -84,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _submitForm,
+                  onPressed: _loginUser,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
@@ -112,7 +143,10 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               const SizedBox(height: 24),
-              _socialButtons,
+              SocialButtons(
+                onGooglePressed: () => print('Google login'),
+                onFacebookPressed: () => print('Facebook login'),
+              ),
               const SizedBox(height: 32),
               _haveNoAccount,
             ],
@@ -242,31 +276,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  Widget get _socialButtons {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildSocialIcon('assets/images/google.webp'),
-        SizedBox(width: 16),
-        _buildSocialIcon('assets/images/fb2.webp'),
-      ],
-    );
-  }
-
-  Widget _buildSocialIcon(String assetPath) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-        icon: Image.asset(assetPath, width: 24, height: 24),
-        onPressed: () {},
-      ),
-    );
-  }
-
 }

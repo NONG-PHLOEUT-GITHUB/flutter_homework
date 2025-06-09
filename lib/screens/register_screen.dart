@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:homework/routes/app_route.dart';
 import 'package:homework/screens/login_screen.dart';
 import 'package:homework/theme/app_colors.dart';
+import 'package:homework/widgets/social_buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -11,16 +13,41 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   String? _emailError;
+  String? _fullNameError;
   String? _passwordError;
   bool _obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // _saveUserData();
+  }
+
+  // void _saveUserData() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('user_full_name', _fullNameController.text);
+  // }
 
   void _togglePasswordVisibility() {
     setState(() {
       _obscurePassword = !_obscurePassword;
+    });
+  }
+
+  void _validateFullName(String value) {
+    String fullName = _fullNameController.text;
+
+    setState(() {
+      if (fullName.isEmpty) {
+        _fullNameError = 'Full name is required';
+      } else {
+        _fullNameError = null;
+      }
     });
   }
 
@@ -50,12 +77,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     _validatePassword();
+    _validateFullName(_fullNameController.text);
     _validateEmailLive(_emailController.text);
 
     if (_emailError == null && _passwordError == null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_full_name', _fullNameController.text.trim());
+      await prefs.setString('user_email', _emailController.text.trim());
+      await prefs.setString('user_password', _passwordController.text.trim()); // Save password
       // Proceed to next screen or API login
+      // ignore: use_build_context_synchronously
       AppRouter.goToPhoneOtp(context);
     }
   }
@@ -116,7 +149,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Social Buttons
               const SizedBox(height: 24),
 
-              _socialButtons,
+              SocialButtons(
+                onGooglePressed: () => print('Google login'),
+                onFacebookPressed: () => print('Facebook login'),
+              ),
+
               const SizedBox(height: 28),
               _alreadyHaveAccount,
 
@@ -133,6 +170,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 24),
+
+        Text('Full name', style: TextStyle(fontWeight: FontWeight.w500)),
+        SizedBox(height: 8),
+
+        TextField(
+          decoration: InputDecoration(
+            hintText: 'Enter your fulll name',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            errorText: _fullNameError,
+          ),
+          controller: _fullNameController,
+          onChanged: _validateFullName,
+          keyboardType: TextInputType.emailAddress,
+        ),
+        SizedBox(height: 16),
 
         Text('Email', style: TextStyle(fontWeight: FontWeight.w500)),
         SizedBox(height: 8),
@@ -193,32 +245,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget get _socialButtons {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildSocialIcon('assets/images/google.webp'),
-        SizedBox(width: 16),
-        _buildSocialIcon('assets/images/fb2.webp'),
-      ],
-    );
-  }
-
-  Widget _buildSocialIcon(String assetPath) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-        icon: Image.asset(assetPath, width: 24, height: 24),
-        onPressed: () {},
-      ),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homework/theme/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/carousel_slider.dart';
 import '../services/product_service.dart';
 
@@ -14,6 +15,21 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = "ទាំងអស់";
   final TextEditingController _searchController = TextEditingController();
   String searchKeyword = "";
+  String _fullName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('user_full_name') ?? '';
+    setState(() {
+      _fullName = name;
+    });
+  }
 
   final List<Map<String, dynamic>> allProducts = [
     {
@@ -57,32 +73,30 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Greeting
-          const Text(
-            'Hi, Nong',
+          Text(
+            'Hi, ${_fullName.isNotEmpty ? _fullName : 'User'}',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Colors.black, // Change to AppColors.onPrimary if defined
             ),
           ),
-          // Notification icon with badge
-          CircleAvatar(
-            backgroundColor: Colors.grey.shade200,
-            child: IconButton(
-              icon: Badge.count(
-                count: 99,
-                backgroundColor: Colors.red,
-                child: const Icon(
-                  Icons.notifications_none,
-                  color: Colors.black,
-                ),
-              ),
-              // icon: const Icon(Icons.notifications_none, color: Colors.black),
-              onPressed: () {},
-            ),
-          ),
         ],
       ),
+      actions: [
+        CircleAvatar(
+          backgroundColor: Colors.grey.shade200,
+          child: IconButton(
+            icon: Badge.count(
+              count: 99,
+              backgroundColor: Colors.red,
+              child: const Icon(Icons.notifications_none, color: Colors.black),
+            ),
+            onPressed: () {},
+          ),
+        ),
+        SizedBox(width: 10), // For spacing
+      ],
     );
   }
 
@@ -185,7 +199,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (searchKeyword.isNotEmpty) {
       filtered =
           filtered
-              .where((p) => p['title'].toLowerCase().contains(searchKeyword) || p['currentPrice'].toLowerCase().contains(searchKeyword))
+              .where(
+                (p) =>
+                    p['title'].toLowerCase().contains(searchKeyword) ||
+                    p['currentPrice'].toLowerCase().contains(searchKeyword),
+              )
               .toList();
     }
 
