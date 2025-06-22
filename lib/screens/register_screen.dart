@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homework/routes/app_route.dart';
 import 'package:homework/screens/login_screen.dart';
-import 'package:homework/services/file_service.dart';
 import 'package:homework/theme/app_colors.dart';
 import 'package:homework/widgets/social_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +16,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final _fileService = FileService();
 
   String? _emailError;
   String? _fullNameError;
@@ -80,17 +78,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _validateEmailLive(_emailController.text);
 
     if (_emailError == null && _passwordError == null) {
-      final prefs = await SharedPreferences.getInstance();
-
       final fullName = _fullNameController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
+      // Save to shared_preferences (works on web)
+      final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_full_name', fullName);
       await prefs.setString('user_email', email);
-      await prefs.setString('user_password', password);
-      // ⬇ Save to file
-      await _fileService.saveEntry(fullName, email);
+      await prefs.setString(
+        'user_password',
+        password,
+      ); // Store passwords only if needed!
+      // Data to save to the file
+
+      // --- Using FileWriter to save data to a text file ---
       // ignore: use_build_context_synchronously
       AppRouter.goToPhoneOtp(context);
     }

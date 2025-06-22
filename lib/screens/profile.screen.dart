@@ -177,7 +177,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.lock,
             title: 'Change Password',
             onTap: () {
-              print('Change Password tapped');
               // Example: Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordScreen()));
             },
           ),
