@@ -107,35 +107,35 @@ class _HomeScreenState extends State<HomeScreen> {
           description: 'Women\'s Medium Support',
           price: 95.00,
           categoryId: 2, // 'នារី'
-          imagePath: 'assets/images/image_6ee93f.png' // Ensure this asset is in your pubspec.yaml
+          imagePath: 'assets/images/real.webp' // Ensure this asset is in your pubspec.yaml
       ));
       await _productService.insertProduct(Product(
           name: 'Smart Watch',
           description: 'Fitness tracker with heart rate monitor.',
           price: 150.00,
           categoryId: 1, // 'បុរស' or 'នារី' depending on classification
-          imagePath: 'assets/images/smart_watch.webp' // Placeholder, add your own asset
+          imagePath: 'assets/images/real.webp' // Placeholder, add your own asset
       ));
       await _productService.insertProduct(Product(
           name: 'Denim Jeans',
           description: 'Classic blue denim jeans, comfortable fit.',
           price: 45.00,
           categoryId: 1, // 'បុរស'
-          imagePath: 'assets/images/denim_jeans.webp' // Placeholder, add your own asset
+          imagePath: 'assets/images/real2.webp' // Placeholder, add your own asset
       ));
       await _productService.insertProduct(Product(
           name: 'Summer Dress',
           description: 'Light and airy dress for summer days.',
           price: 60.00,
           categoryId: 2, // 'នារី'
-          imagePath: 'assets/images/summer_dress.webp' // Placeholder, add your own asset
+          imagePath: 'assets/images/mc2.webp' // Placeholder, add your own asset
       ));
       await _productService.insertProduct(Product(
           name: 'Toy Car',
           description: 'Colorful toy car for young children.',
           price: 10.50,
           categoryId: 3, // 'ក្មេង'
-          imagePath: 'assets/images/toy_car.webp' // Placeholder, add your own asset
+          imagePath: 'assets/images/man_city.webp' // Placeholder, add your own asset
       ));
     }
   }
