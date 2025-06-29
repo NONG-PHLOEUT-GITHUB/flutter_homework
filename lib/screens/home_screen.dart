@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:homework/providers/cart_provider.dart';
 import 'package:homework/theme/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/carousel_slider.dart';
 import '../services/product_service.dart';
-import '../models/product.dart'; // Import Product model
-import '../models/category.dart'; // Import Category model
-import '../services/category_service.dart'; // Import CategoryService
-import '../services/order_service.dart'; // Import OrderService
-import '../models/order.dart'; // Import Order model
-import '../models/order_item.dart'; // Import OrderItem model
-import '../database/database_helper.dart'; // Import DatabaseHelper for initial data/delete DB
-import 'product_detail_screen.dart'; // Import the new ProductDetailScreen
-import 'cart_screen.dart'; // Import the CartScreen
+import '../models/product.dart';
+import '../models/category.dart';
+import '../services/category_service.dart';
+import '../services/order_service.dart';
+import '../models/order.dart';
+import '../models/order_item.dart';
+import '../database/database_helper.dart';
+import 'product_detail_screen.dart';
+import 'cart_screen.dart';
+import 'package:provider/provider.dart'; // Make sure this is imported
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,20 +33,21 @@ class _HomeScreenState extends State<HomeScreen> {
   final OrderService _orderService = OrderService();
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
-  Future<List<Product>>? _productsFuture; // Future to load products
-  List<Product> _allProducts = []; // To hold all loaded products
-  List<Product> _filteredProducts = []; // To hold filtered products for display
+  Future<List<Product>>? _productsFuture;
+  List<Product> _allProducts = [];
+  List<Product> _filteredProducts = [];
 
-  // Cart management
-  Map<Product, int> _cart = {}; // Product -> quantity
-  double _cartTotal = 0.0;
-  int _cartItemCount = 0; // To display badge count
+  // --- REMOVE THESE LOCAL CART MANAGEMENT VARIABLES ---
+  // Map<Product, int> _cart = {};
+  // double _cartTotal = 0.0;
+  // int _cartItemCount = 0;
+  // --- END REMOVAL ---
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-    _initializeData(); // Load data from DB on init
+    _initializeData();
   }
 
   void _loadUserData() async {
@@ -55,88 +58,100 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // --- Database Initialization and Loading ---
   Future<void> _initializeData() async {
-    // Uncomment the line below during development to reset the database
-    // This is useful if you change your schema (e.g., added imagePath)
-    // await _dbHelper.deleteDatabaseFile();
-    // print("Database deleted on app start.");
-
-    await _insertInitialData(); // Insert sample data if DB is empty
-    _loadProducts(); // Load products after initial data is ensured
+    await _insertInitialData();
+    _loadProducts();
   }
 
   Future<void> _insertInitialData() async {
-    // Check if categories exist, if not, insert them
     List<Category> existingCategories = await _categoryService.getCategories();
     if (existingCategories.isEmpty) {
-      print('Inserting initial categories...');
-      await _categoryService.insertCategory(Category(name: 'បុរស', description: 'Men\'s Apparel'));
-      await _categoryService.insertCategory(Category(name: 'នារី', description: 'Women\'s Apparel'));
-      await _categoryService.insertCategory(Category(name: 'ក្មេង', description: 'Kids\' Apparel'));
+      await _categoryService.insertCategory(
+        Category(name: 'បុរស', description: 'Men\'s Apparel'),
+      );
+      await _categoryService.insertCategory(
+        Category(name: 'នារី', description: 'Women\'s Apparel'),
+      );
+      await _categoryService.insertCategory(
+        Category(name: 'ក្មេង', description: 'Kids\' Apparel'),
+      );
     }
 
-    // Check if products exist, if not, insert them with image paths
     List<Product> existingProducts = await _productService.getProducts();
     if (existingProducts.isEmpty) {
       print('Inserting initial products...');
-      // Assuming IDs 1, 2, 3 for 'បុរស', 'នារី', 'ក្មេង' categories respectively
-      await _productService.insertProduct(Product(
+      await _productService.insertProduct(
+        Product(
           name: 'Mens Shirt',
           description: 'Stylish casual shirt for men.',
           price: 17.00,
-          categoryId: 1, // 'បុរស'
-          imagePath: 'assets/images/man_city.webp'
-      ));
-      await _productService.insertProduct(Product(
+          categoryId: 1,
+          imagePath: 'assets/images/man_city.webp',
+        ),
+      );
+      await _productService.insertProduct(
+        Product(
           name: 'Ladies Top',
           description: 'Comfortable and fashionable top for ladies.',
           price: 32.00,
-          categoryId: 2, // 'នារី'
-          imagePath: 'assets/images/lp.jpg'
-      ));
-      await _productService.insertProduct(Product(
+          categoryId: 2,
+          imagePath: 'assets/images/lp.jpg',
+        ),
+      );
+      await _productService.insertProduct(
+        Product(
           name: 'Kids Shirt',
           description: 'Fun and colorful shirt for kids.',
           price: 21.00,
-          categoryId: 3, // 'ក្មេង'
-          imagePath: 'assets/images/mc2.webp'
-      ));
-      await _productService.insertProduct(Product(
+          categoryId: 3,
+          imagePath: 'assets/images/mc2.webp',
+        ),
+      );
+      await _productService.insertProduct(
+        Product(
           name: 'Swoosh T-Shirt',
           description: 'Women\'s Medium Support',
           price: 95.00,
-          categoryId: 2, // 'នារី'
-          imagePath: 'assets/images/real.webp' // Ensure this asset is in your pubspec.yaml
-      ));
-      await _productService.insertProduct(Product(
+          categoryId: 2,
+          imagePath: 'assets/images/real.webp',
+        ),
+      );
+      await _productService.insertProduct(
+        Product(
           name: 'Smart Watch',
           description: 'Fitness tracker with heart rate monitor.',
           price: 150.00,
-          categoryId: 1, // 'បុរស' or 'នារី' depending on classification
-          imagePath: 'assets/images/real.webp' // Placeholder, add your own asset
-      ));
-      await _productService.insertProduct(Product(
+          categoryId: 1,
+          imagePath: 'assets/images/real.webp',
+        ),
+      );
+      await _productService.insertProduct(
+        Product(
           name: 'Denim Jeans',
           description: 'Classic blue denim jeans, comfortable fit.',
           price: 45.00,
-          categoryId: 1, // 'បុរស'
-          imagePath: 'assets/images/real2.webp' // Placeholder, add your own asset
-      ));
-      await _productService.insertProduct(Product(
+          categoryId: 1,
+          imagePath: 'assets/images/real_2.webp',
+        ),
+      );
+      await _productService.insertProduct(
+        Product(
           name: 'Summer Dress',
           description: 'Light and airy dress for summer days.',
           price: 60.00,
-          categoryId: 2, // 'នារី'
-          imagePath: 'assets/images/mc2.webp' // Placeholder, add your own asset
-      ));
-      await _productService.insertProduct(Product(
+          categoryId: 2,
+          imagePath: 'assets/images/mc2.webp',
+        ),
+      );
+      await _productService.insertProduct(
+        Product(
           name: 'Toy Car',
           description: 'Colorful toy car for young children.',
           price: 10.50,
-          categoryId: 3, // 'ក្មេង'
-          imagePath: 'assets/images/man_city.webp' // Placeholder, add your own asset
-      ));
+          categoryId: 3,
+          imagePath: 'assets/images/man_city.webp',
+        ),
+      );
     }
   }
 
@@ -144,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _productsFuture = _productService.getProducts().then((products) {
         _allProducts = products;
-        _applyFilters(); // Apply filters immediately after loading
+        _applyFilters();
         return products;
       });
     });
@@ -153,26 +168,31 @@ class _HomeScreenState extends State<HomeScreen> {
   void _applyFilters() {
     List<Product> filtered = _allProducts;
 
-    // Category filtering
     if (selectedCategory != "ទាំងអស់") {
       int? categoryIdToFilter;
-      if (selectedCategory == 'បុរស') categoryIdToFilter = 1;
-      else if (selectedCategory == 'នារី') categoryIdToFilter = 2;
-      else if (selectedCategory == 'ក្មេង') categoryIdToFilter = 3;
+      if (selectedCategory == 'បុរស')
+        categoryIdToFilter = 1;
+      else if (selectedCategory == 'នារី')
+        categoryIdToFilter = 2;
+      else if (selectedCategory == 'ក្មេង')
+        categoryIdToFilter = 3;
 
       if (categoryIdToFilter != null) {
-        filtered = filtered.where((p) => p.categoryId == categoryIdToFilter).toList();
+        filtered =
+            filtered.where((p) => p.categoryId == categoryIdToFilter).toList();
       }
     }
 
-    // Text filtering
     if (searchKeyword.isNotEmpty) {
-      filtered = filtered
-          .where((p) =>
-              p.name.toLowerCase().contains(searchKeyword) ||
-              p.description.toLowerCase().contains(searchKeyword) ||
-              p.price.toStringAsFixed(2).contains(searchKeyword))
-          .toList();
+      filtered =
+          filtered
+              .where(
+                (p) =>
+                    p.name.toLowerCase().contains(searchKeyword) ||
+                    p.description.toLowerCase().contains(searchKeyword) ||
+                    p.price.toStringAsFixed(2).contains(searchKeyword),
+              )
+              .toList();
     }
 
     setState(() {
@@ -186,98 +206,38 @@ class _HomeScreenState extends State<HomeScreen> {
       _applyFilters();
     });
   }
-  // --- End Database Initialization and Loading ---
 
-  // --- Cart Operations ---
-  void _addToCart(Product product, int quantity) {
-    setState(() {
-      // Create a new map to trigger a rebuild
-      _cart = Map.from(_cart) // <--- CRITICAL LINE
-        ..update(
-          product,
-          (currentQuantity) => currentQuantity + quantity,
-          ifAbsent: () => quantity,
-        );
-      _cartTotal += product.price * quantity;
-      _cartItemCount += quantity;
-      print('HomeScreen: _addToCart - Cart state updated. New cart hash: ${_cart.hashCode}');
-    });
-    _showSnackBar('${product.name} x $quantity added to cart');
-  }
-
-  // Method to update cart item quantity (used by CartScreen)
-  void _updateCartItemQuantity(Product product, int quantityChange) {
-    setState(() {
-      // Create a new map to trigger a rebuild
-      Map<Product, int> newCart = Map.from(_cart); // <--- CRITICAL LINE
-
-      if (newCart.containsKey(product)) {
-        int currentQuantity = newCart[product]!;
-        int newQuantity = currentQuantity + quantityChange;
-
-        if (newQuantity > 0) {
-          newCart[product] = newQuantity;
-          _cartTotal += product.price * quantityChange;
-          _cartItemCount += quantityChange;
-        } else {
-          // If new quantity is 0 or less, remove item
-          _cartTotal -= product.price * currentQuantity; // Subtract original quantity value
-          _cartItemCount -= currentQuantity;
-          newCart.remove(product);
-        }
-      }
-      _cart = newCart; // Assign the new map to _cart
-      print('HomeScreen: _updateCartItemQuantity - Cart state updated. New cart hash: ${_cart.hashCode}');
-    });
-  }
-
-  // Method to remove item from cart (used by CartScreen)
-  void _removeProductFromCart(Product product) {
-    setState(() {
-      // Create a new map to trigger a rebuild
-      Map<Product, int> newCart = Map.from(_cart); // <--- CRITICAL LINE
-
-      if (newCart.containsKey(product)) {
-        int quantity = newCart[product]!;
-        newCart.remove(product);
-        _cartTotal -= product.price * quantity;
-        _cartItemCount -= quantity;
-      }
-      _cart = newCart; // Assign the new map to _cart
-      print('HomeScreen: _removeProductFromCart - Cart state updated. New cart hash: ${_cart.hashCode}');
-    });
-  }
+  // --- Cart Operations - REFACTOR TO USE PROVIDER ---
+  // These methods will now directly call methods on CartProvider
+  // The 'context' will automatically rebuild widgets listening to CartProvider.
 
   Future<void> _placeOrder() async {
-    if (_cart.isEmpty) {
+    final cartProvider = context.read<CartProvider>();
+    if (cartProvider.items.isEmpty) {
       _showSnackBar('Cart is empty. Add some items first!', isError: true);
       return;
     }
 
     final newOrder = Order(
-      totalAmount: _cartTotal,
+      totalAmount: cartProvider.cartTotal,
       orderDate: DateTime.now().toIso8601String(),
     );
 
-    List<OrderItem> orderItems = _cart.entries.map((entry) {
-      return OrderItem(
-        orderId: 0, // Temporary, will be updated by service
-        productId: entry.key.id!,
-        quantity: entry.value,
-        price: entry.key.price,
-      );
-    }).toList();
+    List<OrderItem> orderItems =
+        cartProvider.items.entries.map((entry) {
+          return OrderItem(
+            orderId: 0,
+            productId: entry.key.id!,
+            quantity: entry.value,
+            price: entry.key.price,
+          );
+        }).toList();
 
     try {
       final orderId = await _orderService.createOrder(newOrder, orderItems);
       print('HomeScreen: Order placed with ID: $orderId');
-      setState(() {
-        _cart.clear(); // This already creates a new, empty map effectively
-        _cartTotal = 0.0;
-        _cartItemCount = 0;
-      });
+      cartProvider.clearCart(); // Clear cart via provider
       _showSnackBar('Order placed successfully!');
-      // You might want to refresh a list of past orders if you displayed them
     } catch (e) {
       print('HomeScreen: Error placing order: $e');
       _showSnackBar('Failed to place order: $e', isError: true);
@@ -288,24 +248,27 @@ class _HomeScreenState extends State<HomeScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red : AppColors.primary, // Use primary color for success
+        backgroundColor: isError ? Colors.red : AppColors.primary,
         duration: const Duration(seconds: 2),
       ),
     );
   }
-  // --- End Cart Operations ---
-
+  // --- End Cart Operations REFACTOR ---
 
   @override
   Widget build(BuildContext context) {
+    // Watch CartProvider for changes to rebuild parts of UI that depend on it
+    final cartProvider = context.watch<CartProvider>();
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _appBar,
+      appBar: _appBar(cartProvider.itemCount), // Pass count from provider
       body: SingleChildScrollView(child: _body),
     );
   }
 
-  PreferredSizeWidget get _appBar {
+  PreferredSizeWidget _appBar(int cartItemCount) {
+    // Now accepts cart count
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: AppColors.background,
@@ -313,7 +276,6 @@ class _HomeScreenState extends State<HomeScreen> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Greeting
           Text(
             'Hi, ${_fullName.isNotEmpty ? _fullName : 'User'}',
             style: const TextStyle(
@@ -325,52 +287,50 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       actions: [
-        // Cart Icon
         CircleAvatar(
           backgroundColor: Colors.grey.shade200,
           child: IconButton(
             icon: Badge.count(
-              count: _cartItemCount, // Use dynamic cart count
-              isLabelVisible: _cartItemCount > 0,
+              count: cartItemCount, // Use dynamic cart count from parameter
+              isLabelVisible: cartItemCount > 0,
               backgroundColor: Colors.red,
-              child: const Icon(Icons.shopping_cart_outlined, color: Colors.black),
+              child: const Icon(
+                Icons.shopping_cart_outlined,
+                color: Colors.black,
+              ),
             ),
             onPressed: () async {
               // Navigate to CartScreen
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CartScreen(
-                    cart: _cart,
-                    cartTotal: _cartTotal,
-                    onUpdateCartItem: _updateCartItemQuantity,
-                    onRemoveCartItem: _removeProductFromCart,
-                    onPlaceOrder: _placeOrder,
-                  ),
+                  builder:
+                      (context) => CartScreen(
+                        // NO LONGER PASSING CART DATA MANUALLY!
+                        // CartScreen will also use Provider to access cart data.
+                        onPlaceOrder:
+                            _placeOrder, // Still need to pass this or refactor _placeOrder to be in CartScreen
+                      ),
                 ),
               );
-              // After returning from CartScreen, rebuild to reflect any changes
-              setState(() {}); // This ensures HomeScreen rebuilds and updates its UI based on the new cart state
-              print('HomeScreen: Returned from CartScreen. Rebuilding HomeScreen.');
+              // No need for setState(() {}) here, Provider handles rebuilds
             },
           ),
         ),
-        const SizedBox(width: 10), // Spacing between icons
-        // Database Reset Icon (Development Only)
+        const SizedBox(width: 10),
         CircleAvatar(
           backgroundColor: Colors.grey.shade200,
           child: IconButton(
             icon: const Icon(Icons.delete_forever, color: Colors.black),
             onPressed: () async {
               await _dbHelper.deleteDatabaseFile();
-              // Re-initialize data and refresh UI after deleting DB
               await _initializeData();
               _showSnackBar('Database reset and re-initialized!');
             },
             tooltip: 'Reset Database (Development Only)',
           ),
         ),
-        const SizedBox(width: 10), // For spacing
+        const SizedBox(width: 10),
       ],
     );
   }
@@ -380,7 +340,6 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          /// Search Field
           Container(
             margin: const EdgeInsets.only(top: 16),
             decoration: BoxDecoration(
@@ -396,13 +355,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TextField(
                     controller: _searchController,
                     decoration: const InputDecoration(
-                      hintText: 'ស្វែងរក...', // "Search..." in Khmer
+                      hintText: 'ស្វែងរក...',
                       border: InputBorder.none,
                     ),
                     onChanged: (value) {
                       setState(() {
                         searchKeyword = value.toLowerCase();
-                        _applyFilters(); // Apply filters on search change
+                        _applyFilters();
                       });
                     },
                   ),
@@ -410,25 +369,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-
           const SizedBox(height: 20),
-
-          /// You can add more widgets like sliders or other cards here.
-          const ImageSlider(), //or any other content
-
+          const ImageSlider(),
           const SizedBox(height: 12),
           categoryChips,
           const SizedBox(height: 16),
           sectionHeader("New Arrivals"),
           const SizedBox(height: 8),
-          productList, // Now uses FutureBuilder to load from DB
+          productList,
           const SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  // 🔘 Category Chips
   Widget get categoryChips {
     return Row(
       children: [
@@ -462,33 +416,33 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget get productList {
-    return SizedBox(
-      height: 250, // Increased height to accommodate image and text
-      child: FutureBuilder<List<Product>>(
-        future: _productsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || _filteredProducts.isEmpty) {
-            return const Center(child: Text('No products found.'));
-          } else {
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _filteredProducts.length,
-              itemBuilder: (context, index) {
-                final product = _filteredProducts[index];
-                return _productCard(product);
-              },
-            );
-          }
-        },
-      ),
+    return FutureBuilder<List<Product>>(
+      future: _productsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || _filteredProducts.isEmpty) {
+          return const Center(child: Text('No products found.'));
+        } else {
+          return GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.68,
+            children:
+                _filteredProducts
+                    .map((product) => _productCard(product))
+                    .toList(),
+          );
+        }
+      },
     );
   }
 
-  // 📦 Product Card for Home Screen (now takes a Product object)
   Widget _productCard(Product product) {
     return GestureDetector(
       onTap: () async {
@@ -498,84 +452,118 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context) => ProductDetailScreen(product: product),
           ),
         );
-        // If a product and quantity are returned, add to cart
         if (result != null && result is Map<String, dynamic>) {
           final addedProduct = result['product'] as Product;
           final addedQuantity = result['quantity'] as int;
-          _addToCart(addedProduct, addedQuantity);
+          context.read<CartProvider>().addToCart(addedProduct, addedQuantity);
+          _showSnackBar('${addedProduct.name} x $addedQuantity added to cart');
         }
       },
       child: Container(
-        width: 160,
-        margin: const EdgeInsets.only(right: 12),
+        margin: const EdgeInsets.only(bottom: 5, right: 15),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withOpacity(0.15),
               spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: Hero(
-                tag: 'productImage-${product.id}', // Hero tag for animation
-                child: Image.asset(
-                  product.imagePath,
-                  height: 150, // Adjusted height for better display
-                  width: double.infinity,
-                  fit: BoxFit.cover, // Use cover for card preview
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 150,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
-                    );
-                  },
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
+              child: AspectRatio(
+                aspectRatio: 1, // Makes the image square
+                child: Hero(
+                  tag: 'productImage-${product.id}',
+                  child: Image.asset(
+                    product.imagePath,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    product.description,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        '\$${product.price.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: AppColors.primary,
-                        ),
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 2,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment:
+                      MainAxisAlignment
+                          .spaceBetween, // Distributes space vertically
+                  children: [
+                    Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                       ),
-                      // Removed old price for simplicity as it's not in the Product model
-                    ],
-                  ),
-                ],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      product.description,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '\$${product.price.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.read<CartProvider>().addToCart(product, 1);
+                            _showSnackBar('${product.name} x 1 added to cart');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size.zero,
+                            padding: const EdgeInsets.all(4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 3,
+                          ),
+                          child: const Icon(Icons.add, size: 18),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -584,7 +572,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 🧾 Section Header with "See More"
   static Widget sectionHeader(String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -595,7 +582,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Row(
           children: [
-            Text("View all", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)),
+            Text(
+              "View all",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AppColors.primary,
+              ),
+            ),
             const SizedBox(width: 4),
             const Icon(Icons.arrow_forward, color: AppColors.primary),
           ],

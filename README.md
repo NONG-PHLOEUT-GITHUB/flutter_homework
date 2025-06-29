@@ -1,16 +1,31 @@
-# homework
+# 📱 Homework Flutter Project
 
-A new Flutter project.
+A simple Flutter app that displays product listings with detailed views. Features include favorites, cart simulation, quantity/size selection, and smooth navigation animations.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🚀 Getting Started
 
-A few resources to get you started if this is your first Flutter project:
+Follow these steps to run the app locally.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## ✅ Prerequisites
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install)
+- Code editor like [VS Code](https://code.visualstudio.com/) or [Android Studio](https://developer.android.com/studio)
+- Emulator or physical device
+
+---
+
+## 📦 Installation
+
+### 1. Clone the Repository
+
+git clone <repository_url_here>
+cd <project_folder_name>
+
+
+## 2. Install Packages
+
+flutter pub get

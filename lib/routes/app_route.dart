@@ -23,7 +23,6 @@ class AppRouter {
     profile: (context) => SettingsScreen(),
   };
 
-  // Corrected version of onGenerateRoute
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
@@ -36,6 +35,8 @@ class AppRouter {
         return _buildRoute(const RegisterScreen());
       case mainLayout:
         return _buildRoute(const MainLayout());
+      case profile:
+        return _buildRoute(SettingsScreen());
       default:
         return MaterialPageRoute(
           builder: (context) => const Scaffold(
@@ -46,11 +47,15 @@ class AppRouter {
   }
 
   MaterialPageRoute _buildRoute(Widget widget) {
-    return MaterialPageRoute(builder: (context) => widget);
+    // Wrap widget with Builder so context is below provider in the tree
+    return MaterialPageRoute(
+      builder: (context) => Builder(
+        builder: (_) => widget,
+      ),
+    );
   }
 
-
-  // Optional: helper methods
+  // Optional helper methods
   static void goToPhoneOtp(BuildContext context) {
     Navigator.pushNamed(context, phoneOtp);
   }
